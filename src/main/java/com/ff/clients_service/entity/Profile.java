@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -25,4 +27,6 @@ public class Profile {
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
