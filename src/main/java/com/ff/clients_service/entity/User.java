@@ -6,11 +6,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,4 +22,10 @@ public class User {
     private String email;
     @Column(unique = true, nullable=false)
     private String password;
+    @Column(nullable=false)
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
+    private String refreshToken;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
