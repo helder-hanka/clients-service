@@ -3,7 +3,6 @@ package com.ff.clients_service.controller;
 import com.ff.clients_service.dto.ProfileUpdateRequest;
 import com.ff.clients_service.entity.Profile;
 import com.ff.clients_service.service.ProfileService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +17,9 @@ public class ProfileController {
 
     @PostMapping
     public ResponseEntity<Profile> createProfile(@RequestBody ProfileUpdateRequest request, Principal principal){
+        if (principal == null || principal.getName() == null) {
+            throw new RuntimeException("Utilisateur non trouvé");
+        }
         String email = principal.getName();
         Profile createProfile = profileService.saveProfile(email, request);
         return ResponseEntity.ok(createProfile);
@@ -31,7 +33,7 @@ public class ProfileController {
     }
 
     @GetMapping
-    public ResponseEntity<Profile> getProfile(@RequestBody ProfileUpdateRequest request, Principal principal){
+    public ResponseEntity<Profile> getProfile(Principal principal){
         String email = principal.getName();
         return ResponseEntity.ok(profileService.getProfile(email));
     }
