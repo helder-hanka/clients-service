@@ -3,6 +3,8 @@ package com.ff.clients_service.service;
 import com.ff.clients_service.dto.*;
 import com.ff.clients_service.entity.User;
 import com.ff.clients_service.entity.UserRole;
+import com.ff.clients_service.rabbitmq.events.ClientEvent;
+import com.ff.clients_service.rabbitmq.events.ClientEventPublisher;
 import com.ff.clients_service.repository.UserRepository;
 import com.ff.clients_service.security.JwtService;
 import com.ff.clients_service.utils.ResourceNotFoundException;
@@ -20,6 +22,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authManager;
+    private final ClientEventPublisher publisher;
 
     public AuthResponse register(RegisterRequest request) {
         var userEmail = userRepository.findByEmail(request.getEmail()).isPresent();
@@ -39,6 +42,7 @@ public class AuthService {
         savedUser.setRefreshToken(refreshToken);
         userRepository.save(savedUser);
 
+        publisher.publish(new ClientEvent(savedUser.getId(), savedUser.getEmail(), LocalDateTime.now()));
         return AuthResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
